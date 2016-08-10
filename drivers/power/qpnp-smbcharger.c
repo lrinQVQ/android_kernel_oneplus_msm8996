@@ -1060,11 +1060,31 @@ static inline enum power_supply_type get_usb_supply_type(int type)
 	return usb_type_enum[type];
 }
 
+static bool is_src_detect_high(struct smbchg_chip *chip)
+{
+	int rc;
+	u8 reg;
+
+	rc = smbchg_read(chip, &reg, chip->usb_chgpth_base + RT_STS, 1);
+	if (rc < 0) {
+		dev_err(chip->dev, "Couldn't read usb rt status rc = %d\n", rc);
+		return false;
+	}
+	return reg &= USBIN_SRC_DET_BIT;
+}
+
 static void read_usb_type(struct smbchg_chip *chip, char **usb_type_name,
 		enum power_supply_type *usb_supply_type)
 {
 	int rc, type;
 	u8 reg;
+
+	if (!is_src_detect_high(chip)) {
+		pr_smb(PR_MISC, "src det low\n");
+		*usb_type_name = "Absent";
+		*usb_supply_type = POWER_SUPPLY_TYPE_UNKNOWN;
+		return;
+	}
 
 	if(chip->hvdcp_present) {
 		*usb_type_name = "HVDCP";
@@ -1076,6 +1096,7 @@ static void read_usb_type(struct smbchg_chip *chip, char **usb_type_name,
 		dev_err(chip->dev, "Couldn't read status 5 rc = %d\n", rc);
 		*usb_type_name = "Other";
 		*usb_supply_type = POWER_SUPPLY_TYPE_UNKNOWN;
+		return;
 	}
 	type = get_type(reg);
 	*usb_type_name = get_usb_type_name(type);
@@ -5116,19 +5137,6 @@ if(chip->re_detect_charger_type_status==false)
 	{
 	set_dash_charger_present(false);
 	}
-}
-
-static bool is_src_detect_high(struct smbchg_chip *chip)
-{
-	int rc;
-	u8 reg;
-
-	rc = smbchg_read(chip, &reg, chip->usb_chgpth_base + RT_STS, 1);
-	if (rc < 0) {
-		dev_err(chip->dev, "Couldn't read usb rt status rc = %d\n", rc);
-		return false;
-	}
-	return reg &= USBIN_SRC_DET_BIT;
 }
 
 static bool is_usbin_uv_high(struct smbchg_chip *chip)
