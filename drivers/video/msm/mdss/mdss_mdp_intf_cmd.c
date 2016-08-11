@@ -726,6 +726,10 @@ int mdss_mdp_resource_control(struct mdss_mdp_ctl *ctl, u32 sw_event)
 		break;
 	case MDP_RSRC_CTL_EVENT_STOP:
 
+		/* Cancel early wakeup Work Item */
+		if (cancel_work_sync(&ctx->early_wakeup_clk_work))
+			pr_debug("early wakeup work canceled\n");
+
 		/* If we are already OFF, just return */
 		/* yankelong delete ,qcom's patch I64aba71bb4c5602df9a524b77bd8bf3296dda012
 		if (mdp5_data->resources_state ==
