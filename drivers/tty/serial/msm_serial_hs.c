@@ -363,7 +363,7 @@ static int msm_hs_clk_bus_vote(struct msm_hs_port *msm_uport)
 			__func__, rc);
 		goto core_unprepare;
 	}
-	atomic_inc(&msm_uport->clk_count);
+
 	MSM_HS_DBG("%s: Clock ON successful\n", __func__);
 	return rc;
 core_unprepare:
@@ -384,7 +384,7 @@ static void msm_hs_clk_bus_unvote(struct msm_hs_port *msm_uport)
 	if (msm_uport->pclk)
 		clk_disable_unprepare(msm_uport->pclk);
 	msm_hs_bus_voting(msm_uport, BUS_RESET);
-	atomic_dec(&msm_uport->clk_count);
+
 	MSM_HS_DBG("%s: Clock OFF successful\n", __func__);
 }
 
