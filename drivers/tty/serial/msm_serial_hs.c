@@ -363,6 +363,7 @@ static int msm_hs_clk_bus_vote(struct msm_hs_port *msm_uport)
 			__func__, rc);
 		goto core_unprepare;
 	}
+	atomic_inc(&msm_uport->clk_count);
 	MSM_HS_DBG("%s: Clock ON successful\n", __func__);
 	return rc;
 core_unprepare:
@@ -383,6 +384,7 @@ static void msm_hs_clk_bus_unvote(struct msm_hs_port *msm_uport)
 	if (msm_uport->pclk)
 		clk_disable_unprepare(msm_uport->pclk);
 	msm_hs_bus_voting(msm_uport, BUS_RESET);
+	atomic_dec(&msm_uport->clk_count);
 	MSM_HS_DBG("%s: Clock OFF successful\n", __func__);
 }
 
@@ -2066,7 +2068,6 @@ static void msm_hs_break_ctl(struct uart_port *uport, int ctl)
 	unsigned long flags;
 	struct msm_hs_port *msm_uport = UARTDM_TO_MSM(uport);
 
-	msm_hs_resource_vote(msm_uport);
 	spin_lock_irqsave(&uport->lock, flags);
 	msm_hs_write(uport, UART_DM_CR, ctl ? START_BREAK : STOP_BREAK);
 	/* Ensure register IO completion */
