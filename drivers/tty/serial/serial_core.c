@@ -1391,10 +1391,11 @@ static void uart_close(struct tty_struct *tty, struct file *filp)
 	wake_up_interruptible(&port->close_wait);
 
 	mutex_unlock(&port->mutex);
-}
 
 	tty_ldisc_flush(tty);
 	tty->closing = 0;
+
+}
 
 static void uart_wait_until_sent(struct tty_struct *tty, int timeout)
 {
