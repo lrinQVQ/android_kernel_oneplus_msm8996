@@ -1277,7 +1277,6 @@ unsigned long do_mmap_pgoff(struct file *file, unsigned long addr,
 	*populate = 0;
 
 #ifdef CONFIG_MSM_APP_SETTINGS
-	if (use_app_setting)
 		apply_app_setting_bit(file);
 #endif
 
