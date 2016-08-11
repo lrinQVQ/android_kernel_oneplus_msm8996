@@ -1366,7 +1366,7 @@ static void uart_close(struct tty_struct *tty, struct file *filp)
 	uart_shutdown(tty, state);
 
 	tty_port_tty_set(port, NULL);
-	tty->closing = 0;
+
 	spin_lock_irqsave(&port->lock, flags);
 
 	if (port->blocked_open) {
@@ -1394,6 +1394,7 @@ static void uart_close(struct tty_struct *tty, struct file *filp)
 }
 
 	tty_ldisc_flush(tty);
+	tty->closing = 0;
 
 static void uart_wait_until_sent(struct tty_struct *tty, int timeout)
 {
