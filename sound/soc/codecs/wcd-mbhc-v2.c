@@ -573,7 +573,8 @@ static void wcd_mbhc_report_plug(struct wcd_mbhc *mbhc, int insertion,
 				~WCD_MBHC_JACK_BUTTON_MASK;
 		}
 
-		if (mbhc->micbias_enable) {
+			if (mbhc->micbias_enable &&
+			    mbhc->current_plug == MBHC_PLUG_TYPE_HEADSET) {
 			if (mbhc->mbhc_cb->mbhc_micbias_control)
 				mbhc->mbhc_cb->mbhc_micbias_control(
 						mbhc->codec, MIC_BIAS_2,
