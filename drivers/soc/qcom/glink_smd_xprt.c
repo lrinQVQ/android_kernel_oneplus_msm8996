@@ -704,6 +704,7 @@ static void process_reopen_event(struct work_struct *work)
 		mutex_unlock(&einfo->rx_cmd_lock);
 	}
 	if (ch->local_legacy) {
+		ch->local_legacy = false;
 		mutex_lock(&einfo->rx_cmd_lock);
 		einfo->xprt_if.glink_core_if_ptr->rx_cmd_ch_close_ack(
 								&einfo->xprt_if,
@@ -917,8 +918,6 @@ static void smd_data_ch_close(struct channel *ch)
 		}
 	}
 	mutex_unlock(&ch->ch_probe_lock);
-
-	ch->local_legacy = false;
 
 	spin_lock_irqsave(&ch->intents_lock, flags);
 	while (!list_empty(&ch->intents)) {
