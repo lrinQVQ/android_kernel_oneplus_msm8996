@@ -896,6 +896,7 @@ static void smd_data_ch_close(struct channel *ch)
 {
 	struct intent_info *intent;
 	unsigned long flags;
+	struct channel_work *ch_work;
 
 	SMDXPRT_INFO(ch->edge, "%s Closing SMD channel lcid %u\n",
 			__func__, ch->lcid);
